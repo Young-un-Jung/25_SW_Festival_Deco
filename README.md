@@ -1,8 +1,7 @@
 # 25_SW_Festival_Deco - A Multi-Task AST
 Inha University 
 
-* **주요 기능, 개발 필요성 등을 작성해주세요.**
-    * 주요 기능, 개발 필요성
+# 주요 기능, 개발 필요성
 
 이 프로젝트는 충격 소음원 분류 및 방사소음 크기 예측을 동시에 수행하는 **다중작업 학습(Multi-Task Learning, MTL) 모델 개발**을 목표로 합니다
 
@@ -33,7 +32,7 @@ Inha University
 
 # 기능
 
-* 세부 기능, 적용 기술을 작성해주세요.
+* 세부 기능, 적용 기술 등.
 * 
 * **충격 소음원 분류**
     * 오디오 입력으로부터 desk, chair, lecture stand, book, hammer 등 5가지 소음원을 식별
