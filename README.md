@@ -1,4 +1,4 @@
-# 25_SW_Festival_Deco
+# 25_SW_Festival_Deco - A Multi-Task AST
 Inha University 
 
 * **주요 기능, 개발 필요성 등을 작성해주세요.**
