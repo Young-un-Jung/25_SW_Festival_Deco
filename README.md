@@ -1,6 +1,8 @@
 # 25_SW_Festival_Deco - A Multi-Task AST
 Inha University 
 
+**2025 INHA SW FESTIVAL Kaggle 부문 우수상 (SW중심대학사업단장상)**
+
 # 주요 기능, 개발 필요성
 
 이 프로젝트는 충격 소음원 분류 및 방사소음 크기 예측을 동시에 수행하는 **다중작업 학습(Multi-Task Learning, MTL) 모델 개발**을 목표로 합니다
