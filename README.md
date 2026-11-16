@@ -1,93 +1,48 @@
-# 25_SW_Festival_Deco - A Multi-Task AST
-Inha University 
+# Acoustic Event Forensics: Multi-Task AST
 
-**2025 INHA SW FESTIVAL Kaggle 부문 우수상 (SW중심대학사업단장상)**
+**2025 INHA SW FESTIVAL Kaggle 부문 우수상** (SW중심대학사업단장상)
 
-# 주요 기능, 개발 필요성
+충격음 하나로 무엇이 부딪혔는지(분류)와 소리가 얼마나 컸는지(dB 회귀)를 동시에 맞히는 Audio Spectrogram Transformer 멀티태스크 모델입니다.
 
-이 프로젝트는 충격 소음원 분류 및 방사소음 크기 예측을 동시에 수행하는 **다중작업 학습(Multi-Task Learning, MTL) 모델 개발**을 목표로 합니다
+| 항목 | 내용 |
+|---|---|
+| 기간 | 2025.09 |
+| 팀 | DeCO · 정영운 · 정준우 · 명근호 |
+| 사용 기술 | Python, PyTorch, AST(Audio Spectrogram Transformer) |
 
-기존의 소음 분석 연구는 **단일 과제(예: 소음 분류 또는 소음 크기 추정)** 에만 집중하는 경우가 많아, 다양한 환경에서의 소음 분석에 한계가 있었습니다.
+## 문제
 
-본 프로젝트에서는 **AST(Audio Spectrogram Transformer) 기반 모델**을 활용하여 멀티태스크 학습 구조를 설계함으로써, **정성적 분석(분류)** 과 **정량적 분석(회귀)** 을 동시에 제공하여 실제 환경에서도 활용 가능한 강건한 모델을 개발합니다.
+책상, 의자, 강연대, 책, 망치 5가지 충격원의 WAV 녹음을 받아 충격원을 분류하고 방사소음 크기(dB)를 예측합니다. 분류는 F1-score, 크기 예측은 MAE로 평가합니다.
 
-# 세부 목표
+## 접근
 
-* 개발 세부 목적
-
-1. **충격 소음원 분류 기능 구현**
-
-    > 책상, 의자, 망치 등 5가지 주요 충격원을 분류하는 모델 설계 및 학습
-    > F1-score를 주요 평가 지표로 사용하여 클래스 불균형 문제 대응
-2. **방사소음 크기 예측기능 구현**
-
-    > 입력된 오디오로부터 실제 소음 크기(dB)를 정량적으로 예측
-    > MAE(Mean Absolute Error)의 최소화로 신뢰도 높은 예측 성능 확보
-3. **효율적 모델 구조 설계**
-
-    > AST 기반 백본을 활용하고, 다중 작업 헤드를 적용하여 분류와 회귀를 동시에 학습
-    > GPU 환경에서의 최적화(Adam optimizer, Mixed Precision Training, Gradient Accumulation) 적용
-4. **일반화 성능 확보**
-
-    > 검증 / 테스트 데이터셋을 통한 성능 검증 및 과적합 방지 전략 수립
-    > Best Model 저장 기법 도입으로 실제 환경에서도 안정적인 성능 보장
-
-# 기능
-
-* 세부 기능, 적용 기술 등.
-* 
-* **충격 소음원 분류**
-    * 오디오 입력으로부터 desk, chair, lecture stand, book, hammer 등 5가지 소음원을 식별
-    * 분류 결과를 시각적으로 확인할 수 있도록 확장 가능
-* **방사소음 크기 예측**
-    * 입력된 충격 소음에 대해 데시벨(dB) 값을 수치적으로 예측
-    * 평균 절대 오차(MAE)를 기반으로 성능 최적화
-* **데이터 전처리 기능**
-    * .wav 오디오 파일을 Mel-filterbank 스펙트로그램으로 변환
-    * 길이 정규화, 패딩/트렁케이션, 정규화 과정 자동 처리
-* **학습 및 최적화 기능**
-    * 멀티태스크 손실 함수 구성 (분류 손실 + 회귀 손실 합산)
-    * Mixed Precision 학습, 경사 누적(Gradient Accumulation)을 통한 학습 안정화
-* **실험 환경 관리**
-    * Google Colab GPU 환경에서 학습 가능
-    * 학습 로그 및 성능 지표 시각화 기능 제공
-
-# 시스템 구성도
+- WAV를 Mel-filterbank 스펙트로그램으로 바꾸고 길이를 맞춘 뒤 정규화했습니다.
+- 사전학습된 AST를 공유 백본으로 두고, 분류 헤드와 회귀 헤드를 붙여 두 손실의 합으로 함께 학습했습니다.
+- Mixed Precision과 Gradient Accumulation으로 Colab GPU에서 학습했고, 검증 성능 기준으로 최적 모델을 저장했습니다.
 
 ```
-[입력 데이터: WAV 파일]
-        │
-        ▼
-[데이터 전처리: Mel-Spectrogram 변환 및 정규화]
-        │
-        ▼
-[AST Backbone (Transformer Encoder)]
-        │
-        ├───────────────┐
-        ▼               ▼
-[Classification Head]   [Regression Head]
-(충격원 분류)            (소음 크기 예측)
-        │               │
-        ▼               ▼
-   [Class Output]     [dB Output]
+WAV → Mel 스펙트로그램 → AST 인코더 ─┬→ 분류 헤드 → 충격원
+                                    └→ 회귀 헤드 → dB
 ```
 
-# 참가자 역량
+## 결과
 
-### 정영운
+테스트 327개 녹음 기준입니다.
 
-* **프로그래밍 언어**: Python, C++, AndroidStudio
-* **프레임워크 및 라이브러리**: PyTorch, Tensorflow
-* **기타**: 파이썬기반응용프로그래밍 과목에서 Git 사용 및 웹 개발 경험
+| 지표 | 값 |
+|---|---|
+| 충격원 분류 정확도 | 97.6% |
+| 소음 크기 MAE | 1.41 dB |
 
-### 정준우
+파일별 예측은 [test_results_all_in_one.csv](test_results_all_in_one.csv), 에폭별 학습 기록은 [training_history.csv](training_history.csv)에 있습니다.
 
-* **프로그래밍 언어**: Python, Java, Mysql
-* **프레임워크 및 라이브러리**: Numpy, Pandas, PyTorch
-* **기타**: 2025 산림분야 빅데이터 / AI 활용 창업 경진대회 참가
+## 구성
 
-### 명근호
+```
+Multi_Task_AST.ipynb   전처리, 학습, 평가 전체 과정
+predict.py             저장된 모델로 추론
+best_model.pth         학습된 가중치 (Git LFS)
+[오픈소스 SW 페스티벌] … .pdf   제출 보고서
+```
 
-* **프로그래밍 언어**: Python, R
-* **프레임워크 및 라이브러리**: Scikit-learn, PyTorch
-* **기타**: 2022 인천광역시 공공데이터 활용 분석 경진대회 참가
+AST 구현은 [YuanGongND/ast](https://github.com/YuanGongND/ast)를 사용했습니다.
